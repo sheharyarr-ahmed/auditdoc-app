@@ -5,7 +5,7 @@ services:
   - type: web
     name: auditdoc-backend
     runtime: python
-    plan: starter            # free tier sleeps after 15 min idle; bump to "standard" for always-on
+    plan: free               # sleeps after 15 min idle; bump to "starter" ($7/mo) for always-on
     region: oregon           # change if your users are elsewhere
     rootDir: backend
     buildCommand: pip install -r requirements.txt
