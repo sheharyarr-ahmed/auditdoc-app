@@ -1,0 +1,25 @@
+# Render service definition for the AuditDoc backend.
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: auditdoc-backend
+    runtime: python
+    plan: starter            # free tier sleeps after 15 min idle; bump to "standard" for always-on
+    region: oregon           # change if your users are elsewhere
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT --workers 2
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.13
+      - key: ANTHROPIC_API_KEY
+        sync: false          # set manually in Render dashboard — never commit
+      - key: ALLOWED_ORIGINS
+        sync: false          # set to your Vercel URL after frontend deploy, e.g. https://auditdoc.vercel.app
+      - key: LOG_LEVEL
+        value: INFO
+      - key: MAX_UPLOAD_BYTES
+        value: "52428800"    # 50MB
