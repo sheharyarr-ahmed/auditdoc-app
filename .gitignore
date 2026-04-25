@@ -17,6 +17,9 @@ node_modules/
 out/
 *.tsbuildinfo
 
+# Vercel CLI local state
+.vercel/
+
 # OS
 .DS_Store
 
