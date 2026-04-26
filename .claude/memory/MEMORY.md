@@ -13,9 +13,12 @@ Update this file as TASK_BREAKDOWN.md tasks are completed. Keep it short and ski
 - [x] 2.3 — Local frontend smoke — completed 2026-04-25 · `tsc --noEmit` clean · `next build` clean (3 dynamic API routes registered) · live round-trip via Next proxy reproduced Phase-1 SOC2 finding shape
 
 ## Phase 3 — Deployment
-- [~] 3.1 — Backend on Render — configs ready (`render.yaml`, `runtime.txt`, env-driven CORS via `ALLOWED_ORIGINS`); awaiting user to push repo + connect Render dashboard
-- [~] 3.2 — Frontend on Vercel — no custom config needed; user sets root dir = `frontend` + `BACKEND_URL` env var in Vercel dashboard
-- [ ] 3.3 — End-to-end production test — pending live URLs
+- [x] 3.1 — Backend on Vercel (Python Fluid Compute) — completed 2026-04-25 · live at https://auditdoc-backend.vercel.app · pivoted from Render to avoid card-on-file requirement · zero-config FastAPI auto-detection (no api/index.py wrapper or vercel.json needed) · linked via `vercel link --yes`, env vars set via `vercel env add`, deployed via `vercel deploy --prod --yes`
+- [x] 3.2 — Frontend on Vercel — completed 2026-04-25 · live at https://auditdoc.vercel.app · separate Vercel project (auditdoc-frontend), rootDir=frontend, BACKEND_URL set via `vercel env add` to the backend URL
+- [x] 3.3 — End-to-end production test — completed 2026-04-25 · `/api/upload` → `/api/evaluate` → `/api/results/[id]` round-trip via prod frontend returns same 3-finding SOC2 shape as local: PARTIAL/HIGH (2 cites), PASS/HIGH (1 cite), PARTIAL/MEDIUM (1 cite). Backend CORS tightened from `*` to the frontend URL.
+
+## Follow-ups
+- Next.js 14.1.0 has a known security CVE (flagged in Vercel build log, see https://nextjs.org/blog/security-update-2025-12-11). Bump to a 14.x patch release at next opportunity.
 
 ## Decisions log
 - 2026-04-25 — LLM is Anthropic Claude 4.x via `anthropic` SDK; env var named `ANTHROPIC_API_KEY` (not `OPENAI_API_KEY` as in the original draft).
