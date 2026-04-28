@@ -42,6 +42,15 @@ class Chunk(BaseModel):
     metadata: dict[str, str | int | float | bool] = Field(default_factory=dict)
 
 
+class GovernmentCitation(BaseModel):
+    source: str
+    title: str
+    url: str
+    date: str = ""
+    summary: str = ""
+    hash: str = ""
+
+
 class ChecklistItem(BaseModel):
     id: str
     title: str
@@ -56,6 +65,7 @@ class Finding(BaseModel):
     description: str
     supporting_chunks: list[Chunk] = Field(default_factory=list)
     confidence: float = Field(..., ge=0.0, le=1.0)
+    gov_citations: list[GovernmentCitation] = Field(default_factory=list)
 
     @field_validator("supporting_chunks")
     @classmethod

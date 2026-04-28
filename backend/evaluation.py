@@ -16,6 +16,7 @@ from typing import Any
 
 from anthropic import AsyncAnthropic
 
+import katzilla
 from schemas import (
     ChecklistItem,
     Chunk,
@@ -310,11 +311,27 @@ async def evaluate_checklist(
             summary=f"Evaluation timed out after {overall_timeout_s:.0f}s",
         )
 
+    # Enrich FAIL/PARTIAL findings with Katzilla government citations.
+    # This runs outside asyncio.timeout so it does not consume the evaluation budget.
+    findings_list = list(findings)
+    to_enrich = [(i, f) for i, f in enumerate(findings_list)
+                 if f.status in (FindingStatus.FAIL, FindingStatus.PARTIAL)]
+    if to_enrich:
+        try:
+            citation_batches = await asyncio.gather(
+                *(katzilla.fetch_citations(f.item_id) for _, f in to_enrich)
+            )
+            for (i, f), citations in zip(to_enrich, citation_batches):
+                if citations:
+                    findings_list[i] = f.model_copy(update={"gov_citations": citations})
+        except Exception as exc:
+            logger.error("katzilla enrichment failed: %s", type(exc).__name__)
+
     return EvaluationResult(
         evaluation_id=evaluation_id,
         document_id=document_id,
         checklist_id=checklist_id,
         status=EvaluationStatus.COMPLETED,
-        findings=list(findings),
-        summary=_summarize(list(findings)),
+        findings=findings_list,
+        summary=_summarize(findings_list),
     )

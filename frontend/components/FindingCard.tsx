@@ -1,6 +1,6 @@
 "use client";
 
-import type { Finding, FindingStatus, Severity } from "@/lib/types";
+import type { Finding, FindingStatus, GovernmentCitation, Severity } from "@/lib/types";
 
 const SEVERITY_STYLE: Record<Severity, string> = {
   CRITICAL: "bg-red-900/40 text-red-200 border-red-700",
@@ -45,6 +45,39 @@ export function FindingCard({ finding }: Props) {
                   p.{c.page} · {c.section}
                 </span>
                 <p className="mt-1 text-slate-200">{c.text}</p>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
+      {finding.gov_citations.length > 0 && (
+        <details className="mt-2 text-xs">
+          <summary className="cursor-pointer text-slate-300">
+            {finding.gov_citations.length} government reference
+            {finding.gov_citations.length === 1 ? "" : "s"}
+          </summary>
+          <ul className="mt-2 space-y-1">
+            {finding.gov_citations.map((c, i) => (
+              <li key={i} className="rounded bg-slate-900/50 p-2">
+                <span className="text-slate-400 uppercase tracking-wide text-[10px]">
+                  {c.source.replace(/_/g, " ")}
+                </span>
+                {c.date && (
+                  <span className="ml-2 text-slate-500">{c.date}</span>
+                )}
+                <p className="mt-0.5 text-slate-200">
+                  <a
+                    href={c.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline decoration-slate-600 hover:decoration-slate-400"
+                  >
+                    {c.title}
+                  </a>
+                </p>
+                {c.summary && (
+                  <p className="mt-1 text-slate-400">{c.summary}</p>
+                )}
               </li>
             ))}
           </ul>

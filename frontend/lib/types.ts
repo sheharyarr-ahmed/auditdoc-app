@@ -17,6 +17,15 @@ export interface Chunk {
   metadata: Record<string, string | number | boolean>;
 }
 
+export interface GovernmentCitation {
+  source: string;
+  title: string;
+  url: string;
+  date: string;
+  summary: string;
+  hash: string;
+}
+
 export interface ChecklistItem {
   id: string;
   title: string;
@@ -31,6 +40,7 @@ export interface Finding {
   description: string;
   supporting_chunks: Chunk[];
   confidence: number;
+  gov_citations: GovernmentCitation[];
 }
 
 export interface EvaluationResult {
